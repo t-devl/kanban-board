@@ -36,7 +36,7 @@ export default function Board() {
     setTasks([
       ...tasks,
       {
-        id: tasks.length,
+        id: tasks.length + 1,
         title: "Insert title here",
         columnId: columnId,
       },
@@ -47,6 +47,12 @@ export default function Board() {
     const updatedTasks = tasks.map((task) => {
       return task.id === id ? { ...task, title } : task;
     });
+
+    setTasks(updatedTasks);
+  }
+
+  function deleteTask(id: number) {
+    const updatedTasks = tasks.filter((task) => task.id !== id);
 
     setTasks(updatedTasks);
   }
@@ -63,6 +69,7 @@ export default function Board() {
             tasks={tasks.filter((task) => task.columnId === column.id)}
             addTask={addTask}
             updateTask={updateTask}
+            deleteTask={deleteTask}
           ></Column>
         ))}
       </div>

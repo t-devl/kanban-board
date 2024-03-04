@@ -10,6 +10,7 @@ type ColumnProps = {
   }[];
   addTask: (columnId: string) => void;
   updateTask: (id: number, text: string) => void;
+  deleteTask: (id: number) => void;
 };
 
 export default function Column(props: ColumnProps) {
@@ -23,6 +24,7 @@ export default function Column(props: ColumnProps) {
             id={task.id}
             title={task.title}
             updateTask={props.updateTask}
+            deleteTask={props.deleteTask}
           ></Card>
         ))}
       </div>

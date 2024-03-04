@@ -53,6 +53,16 @@ textarea {
   resize: none;
 }
 
+.card__button {
+  display: block;
+  padding: 0rem 0.25rem;
+  margin-left: auto;
+  border: none;
+  border-radius: 5px;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+}
 .column {
   position: relative;
 }
