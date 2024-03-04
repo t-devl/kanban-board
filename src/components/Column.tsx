@@ -1,14 +1,22 @@
-import { SortableContext } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import Card from "./Card";
 import { ColumnProps } from "./common/types";
 import { useMemo } from "react";
-import { useDroppable } from "@dnd-kit/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 
 export default function Column(props: ColumnProps) {
-  const { setNodeRef } = useDroppable({
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: props.id,
     data: {
-      type: "Column",
       column: {
         id: props.id,
         title: props.title,
@@ -17,14 +25,31 @@ export default function Column(props: ColumnProps) {
     },
   });
 
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
   const taskIds = useMemo(() => {
     return props.tasks.map((task) => task.id);
   }, [props.tasks]);
 
   return (
-    <div className="column" ref={setNodeRef}>
+    <div
+      className={`column ${isDragging ? "column--dragging" : ""}`}
+      ref={setNodeRef}
+      style={style}
+    >
       <div className="column__main">
-        <h2 className="column__title">{props.title}</h2>
+        <div className="column__header">
+          <h2 className="column__title">{props.title}</h2>
+          <FontAwesomeIcon
+            className="column__icon"
+            icon={faGripVertical}
+            {...attributes}
+            {...listeners}
+          />
+        </div>
         <SortableContext items={taskIds}>
           {props.tasks.map((task) => (
             <Card

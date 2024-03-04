@@ -2,14 +2,19 @@ import { useState } from "react";
 import Column from "./Column";
 import {
   DndContext,
+  DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
-import { CardProps } from "./common/types";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { CardProps, ColumnProps } from "./common/types";
 import { createPortal } from "react-dom";
 import Card from "./Card";
+import { useMemo } from "react";
 
 export default function Board() {
   const [tasks, setTasks] = useState([
@@ -22,10 +27,7 @@ export default function Board() {
     { id: 7, title: "Ticket title 7", columnId: "done" },
     { id: 8, title: "Ticket title 8", columnId: "done" },
   ]);
-
-  const [activeTask, setActiveTask] = useState<CardProps | null>(null);
-
-  const columns: { id: string; title: string }[] = [
+  const [columns, setColumns] = useState([
     {
       id: "toDo",
       title: "To do",
@@ -42,7 +44,22 @@ export default function Board() {
       id: "done",
       title: "Done",
     },
-  ];
+  ]);
+
+  const [activeTask, setActiveTask] = useState<CardProps | null>(null);
+  const [activeColumn, setActiveColumn] = useState<ColumnProps | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
+  const columnIds = useMemo(() => {
+    return columns.map((column) => column.id);
+  }, [columns]);
 
   function addTask(columnId: string) {
     setTasks([
@@ -72,23 +89,40 @@ export default function Board() {
   return (
     <div className="board">
       <h1 className="board__title">Board</h1>
-      <DndContext onDragStart={handleDragStart} onDragOver={handleDragOver}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
         <div className="columns">
-          {columns.map((column) => (
-            <Column
-              key={column.id}
-              id={column.id}
-              title={column.title}
-              tasks={tasks.filter((task) => task.columnId === column.id)}
-              addTask={addTask}
-              updateTask={updateTask}
-              deleteTask={deleteTask}
-            ></Column>
-          ))}
+          <SortableContext items={columnIds}>
+            {columns.map((column) => (
+              <Column
+                key={column.id}
+                id={column.id}
+                title={column.title}
+                tasks={tasks.filter((task) => task.columnId === column.id)}
+                addTask={addTask}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+              ></Column>
+            ))}
+          </SortableContext>
         </div>
 
         {createPortal(
           <DragOverlay>
+            {activeColumn && (
+              <Column
+                id={activeColumn.id}
+                title={activeColumn.title}
+                tasks={activeColumn.tasks}
+                addTask={addTask}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+              ></Column>
+            )}
             {activeTask && (
               <Card
                 id={activeTask.id}
@@ -107,12 +141,15 @@ export default function Board() {
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
 
+    if (active.data.current?.column)
+      setActiveColumn(active.data.current?.column);
+    else setActiveTask(active.data.current?.task);
     setActiveTask(active.data.current?.task);
   }
 
   function handleDragOver(event: DragOverEvent) {
     const { active, over } = event;
-    if (!over) return;
+    if (!over || active.data.current?.column) return;
 
     // Over a column
     if (over.data.current?.column) {
@@ -132,12 +169,30 @@ export default function Board() {
 
         if (tasks[activeIndex].columnId !== tasks[overIndex].columnId) {
           tasks[activeIndex].columnId = tasks[overIndex].columnId;
-
-          return arrayMove(tasks, activeIndex, overIndex);
         }
 
         return arrayMove(tasks, activeIndex, overIndex);
       });
     }
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    setActiveTask(null);
+    setActiveColumn(null);
+
+    if (!over) return;
+
+    if (activeColumn?.id === over.id) return;
+
+    setColumns((columns) => {
+      const activeIndex = columns.findIndex(
+        (column) => column.id === active.id
+      );
+
+      const overIndex = columns.findIndex((column) => column.id === over.id);
+
+      return arrayMove(columns, activeIndex, overIndex);
+    });
   }
 }

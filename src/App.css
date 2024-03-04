@@ -29,8 +29,19 @@ textarea {
   background-color: rgb(239, 239, 239);
 }
 
-.card--dragging {
-  visibility: hidden;
+.column {
+  position: relative;
+}
+
+.column__main {
+  height: calc(100% - 2rem);
+  overflow: auto;
+}
+
+.column__header {
+  display: flex;
+  justify-content: space-between;
+  color: rgb(109, 109, 109);
 }
 
 .column__title {
@@ -39,12 +50,39 @@ textarea {
   text-transform: uppercase;
 }
 
+.column__icon {
+  cursor: grab;
+}
+
+.column__button {
+  position: absolute;
+  bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: rgb(109, 109, 109);
+  cursor: pointer;
+}
+
+.column__button:hover {
+  background-color: lightgrey;
+  color: black;
+}
+
+.column--dragging,
+.card--dragging {
+  visibility: hidden;
+  cursor: grabbing;
+}
+
 .card {
   padding: 0.5rem;
   margin-bottom: 1rem;
   border-radius: 5px;
   background-color: white;
   box-shadow: 0px 1px 2px 0px rgb(171, 171, 171);
+  cursor: pointer;
 }
 
 .card__title {
@@ -66,28 +104,6 @@ textarea {
   background-color: red;
   color: white;
   cursor: pointer;
-}
-.column {
-  position: relative;
-}
-
-.column__main {
-  max-height: calc(100% - 2rem);
-  overflow: auto;
-}
-
-.column__button {
-  position: absolute;
-  bottom: 1rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  background: none;
-  cursor: pointer;
-}
-
-.column__button:hover {
-  background-color: lightgrey;
 }
 
 @media (min-width: 600px) {
