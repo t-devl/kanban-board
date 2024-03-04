@@ -1,8 +1,8 @@
-import { CardProps } from "../common/types";
+import { useState } from "react";
 import Column from "./Column";
 
 export default function Board() {
-  const tasks: CardProps[] = [
+  const [tasks, setTasks] = useState([
     { id: 1, title: "Ticket title 1", columnId: "toDo" },
     { id: 2, title: "Ticket title 2", columnId: "toDo" },
     { id: 3, title: "Ticket title 3", columnId: "inProgress" },
@@ -11,7 +11,7 @@ export default function Board() {
     { id: 6, title: "Ticket title 6", columnId: "inQA" },
     { id: 7, title: "Ticket title 7", columnId: "done" },
     { id: 8, title: "Ticket title 8", columnId: "done" },
-  ];
+  ]);
 
   const columns: { id: string; title: string }[] = [
     {
@@ -32,6 +32,25 @@ export default function Board() {
     },
   ];
 
+  function addTask(columnId: string) {
+    setTasks([
+      ...tasks,
+      {
+        id: tasks.length,
+        title: "Insert title here",
+        columnId: columnId,
+      },
+    ]);
+  }
+
+  function updateTask(id: number, title: string) {
+    const updatedTasks = tasks.map((task) => {
+      return task.id === id ? { ...task, title } : task;
+    });
+
+    setTasks(updatedTasks);
+  }
+
   return (
     <div className="board">
       <h1 className="board__title">Board</h1>
@@ -42,6 +61,8 @@ export default function Board() {
             id={column.id}
             title={column.title}
             tasks={tasks.filter((task) => task.columnId === column.id)}
+            addTask={addTask}
+            updateTask={updateTask}
           ></Column>
         ))}
       </div>
