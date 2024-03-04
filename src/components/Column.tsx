@@ -1,32 +1,41 @@
+import { SortableContext } from "@dnd-kit/sortable";
 import Card from "./Card";
-
-type ColumnProps = {
-  id: string;
-  title: string;
-  tasks: {
-    id: number;
-    title: string;
-    columnId: string;
-  }[];
-  addTask: (columnId: string) => void;
-  updateTask: (id: number, text: string) => void;
-  deleteTask: (id: number) => void;
-};
+import { ColumnProps } from "./common/types";
+import { useMemo } from "react";
+import { useDroppable } from "@dnd-kit/core";
 
 export default function Column(props: ColumnProps) {
+  const { setNodeRef } = useDroppable({
+    id: props.id,
+    data: {
+      type: "Column",
+      column: {
+        id: props.id,
+        title: props.title,
+        tasks: props.tasks,
+      },
+    },
+  });
+
+  const taskIds = useMemo(() => {
+    return props.tasks.map((task) => task.id);
+  }, [props.tasks]);
+
   return (
-    <div className="column">
+    <div className="column" ref={setNodeRef}>
       <div className="column__main">
         <h2 className="column__title">{props.title}</h2>
-        {props.tasks.map((task) => (
-          <Card
-            key={task.id}
-            id={task.id}
-            title={task.title}
-            updateTask={props.updateTask}
-            deleteTask={props.deleteTask}
-          ></Card>
-        ))}
+        <SortableContext items={taskIds}>
+          {props.tasks.map((task) => (
+            <Card
+              key={task.id}
+              id={task.id}
+              title={task.title}
+              updateTask={props.updateTask}
+              deleteTask={props.deleteTask}
+            ></Card>
+          ))}
+        </SortableContext>
       </div>
       <button
         onClick={() => props.addTask(props.id)}

@@ -29,6 +29,10 @@ textarea {
   background-color: rgb(239, 239, 239);
 }
 
+.card--dragging {
+  visibility: hidden;
+}
+
 .column__title {
   margin-bottom: 1rem;
   font-size: 1rem;

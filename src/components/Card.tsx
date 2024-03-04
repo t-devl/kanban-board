@@ -1,13 +1,31 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
-
-type CardProps = {
-  id: number;
-  title: string;
-  updateTask: (id: number, text: string) => void;
-  deleteTask: (id: number) => void;
-};
+import { CardProps } from "./common/types";
 
 export default function Card(props: CardProps) {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props.id,
+    data: {
+      task: {
+        id: props.id,
+        title: props.title,
+      },
+    },
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
   const [isEditing, setIsEditing] = useState(false);
 
   function toggleEditing() {
@@ -21,7 +39,13 @@ export default function Card(props: CardProps) {
   }
 
   return (
-    <div className="card">
+    <div
+      className={`card ${isDragging ? "card--dragging" : ""}`}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
       {isEditing ? (
         <>
           <textarea
