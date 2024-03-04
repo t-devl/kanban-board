@@ -36,7 +36,9 @@ export default function Card(props: CardProps) {
 
           <button
             className="card__button card__button--delete"
-            onClick={() => props.deleteTask(props.id)}
+            onMouseDown={() => {
+              props.deleteTask(props.id);
+            }}
           >
             Delete
           </button>
