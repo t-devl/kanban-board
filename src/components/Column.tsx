@@ -2,9 +2,9 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Card from "./Card";
 import { ColumnProps } from "./common/types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
+import { faGripVertical, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Column(props: ColumnProps) {
   const {
@@ -30,9 +30,21 @@ export default function Column(props: ColumnProps) {
     transform: CSS.Transform.toString(transform),
   };
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const taskIds = useMemo(() => {
     return props.tasks.map((task) => task.id);
   }, [props.tasks]);
+
+  function toggleEditing() {
+    setIsEditing(!isEditing);
+  }
+
+  function handleKeyDown(key: string) {
+    if (key === "Enter") {
+      toggleEditing();
+    }
+  }
 
   return (
     <div
@@ -42,13 +54,39 @@ export default function Column(props: ColumnProps) {
     >
       <div className="column__main">
         <div className="column__header">
-          <h2 className="column__title">{props.title}</h2>
-          <FontAwesomeIcon
-            className="column__icon"
-            icon={faGripVertical}
-            {...attributes}
-            {...listeners}
-          />
+          {isEditing ? (
+            <>
+              <textarea
+                className="column__title column__title--edit"
+                value={props.title}
+                autoFocus
+                onBlur={toggleEditing}
+                onKeyDown={(e) => handleKeyDown(e.key)}
+                onChange={(e) => props.updateColumn(props.id, e.target.value)}
+              ></textarea>
+              <button
+                className="column__button column__button--delete"
+                title="Delete column"
+                onMouseDown={() => {
+                  props.deleteColumn(props.id);
+                }}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="column__title" onClick={toggleEditing}>
+                {props.title}
+              </h2>
+              <FontAwesomeIcon
+                className="column__icon"
+                icon={faGripVertical}
+                {...attributes}
+                {...listeners}
+              />
+            </>
+          )}
         </div>
         <SortableContext items={taskIds}>
           {props.tasks.map((task) => (

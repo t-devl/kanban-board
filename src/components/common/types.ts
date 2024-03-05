@@ -13,6 +13,8 @@ export type ColumnProps = {
     title: string;
     columnId: string;
   }[];
+  updateColumn: (id: string, text: string) => void;
+  deleteColumn: (id: string) => void;
   addTask: (columnId: string) => void;
   updateTask: (id: number, text: string) => void;
   deleteTask: (id: number) => void;

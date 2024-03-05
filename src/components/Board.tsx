@@ -18,6 +18,8 @@ import { useMemo } from "react";
 import BinColumn from "./BinColumn";
 
 export default function Board() {
+  const [title, setTitle] = useState("Board");
+  const [isEditing, setIsEditing] = useState(false);
   const [tasks, setTasks] = useState([
     { id: 1, title: "Ticket title 1", columnId: "toDo" },
     { id: 2, title: "Ticket title 2", columnId: "toDo" },
@@ -97,6 +99,14 @@ export default function Board() {
     ]);
   }
 
+  function updateColumn(id: string, title: string) {
+    const updatedColumns = columns.map((column) => {
+      return column.id === id ? { ...column, title } : column;
+    });
+
+    setColumns(updatedColumns);
+  }
+
   function deleteColumn(id: string) {
     const updatedColumns = columns.filter((column) => column.id !== id);
     const updatedTasks = tasks.filter((task) => task.columnId !== id);
@@ -105,9 +115,34 @@ export default function Board() {
     setTasks(updatedTasks);
   }
 
+  function toggleEditing() {
+    setIsEditing(!isEditing);
+  }
+
+  function handleKeyDown(key: string) {
+    if (key === "Enter") {
+      toggleEditing();
+    }
+  }
+
   return (
     <div className="board">
-      <h1 className="board__title">Board</h1>
+      {isEditing ? (
+        <textarea
+          className="board__title board__title--edit"
+          value={title}
+          rows={1}
+          autoFocus
+          onBlur={toggleEditing}
+          onKeyDown={(e) => handleKeyDown(e.key)}
+          onChange={(e) => setTitle(e.target.value)}
+        ></textarea>
+      ) : (
+        <h1 className="board__title" onClick={toggleEditing}>
+          {title}
+        </h1>
+      )}
+
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}
@@ -123,6 +158,8 @@ export default function Board() {
                   id={column.id}
                   title={column.title}
                   tasks={tasks.filter((task) => task.columnId === column.id)}
+                  updateColumn={updateColumn}
+                  deleteColumn={deleteColumn}
                   addTask={addTask}
                   updateTask={updateTask}
                   deleteTask={deleteTask}
@@ -147,6 +184,8 @@ export default function Board() {
                 id={activeColumn.id}
                 title={activeColumn.title}
                 tasks={activeColumn.tasks}
+                updateColumn={updateColumn}
+                deleteColumn={deleteColumn}
                 addTask={addTask}
                 updateTask={updateTask}
                 deleteTask={deleteTask}

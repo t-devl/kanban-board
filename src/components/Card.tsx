@@ -2,6 +2,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 import { CardProps } from "./common/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Card(props: CardProps) {
   const {
@@ -52,7 +54,6 @@ export default function Card(props: CardProps) {
             className="card__title card__title--edit"
             value={props.title}
             autoFocus
-            onClick={toggleEditing}
             onBlur={toggleEditing}
             onKeyDown={(e) => handleKeyDown(e.key)}
             onChange={(e) => props.updateTask(props.id, e.target.value)}
@@ -60,19 +61,16 @@ export default function Card(props: CardProps) {
 
           <button
             className="card__button card__button--delete"
+            title="Delete task"
             onMouseDown={() => {
               props.deleteTask(props.id);
             }}
           >
-            Delete
+            <FontAwesomeIcon icon={faTrash} />
           </button>
         </>
       ) : (
-        <h3
-          className="card__title"
-          onClick={toggleEditing}
-          onBlur={toggleEditing}
-        >
+        <h3 className="card__title" onClick={toggleEditing}>
           {props.title}
         </h3>
       )}
