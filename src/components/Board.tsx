@@ -15,6 +15,7 @@ import { CardProps, ColumnProps } from "./common/types";
 import { createPortal } from "react-dom";
 import Card from "./Card";
 import { useMemo } from "react";
+import BinColumn from "./BinColumn";
 
 export default function Board() {
   const [tasks, setTasks] = useState([
@@ -86,6 +87,24 @@ export default function Board() {
     setTasks(updatedTasks);
   }
 
+  function addColumn() {
+    setColumns([
+      ...columns,
+      {
+        id: `column${columns.length + 1}`,
+        title: "Insert title here",
+      },
+    ]);
+  }
+
+  function deleteColumn(id: string) {
+    const updatedColumns = columns.filter((column) => column.id !== id);
+    const updatedTasks = tasks.filter((task) => task.columnId !== id);
+
+    setColumns(updatedColumns);
+    setTasks(updatedTasks);
+  }
+
   return (
     <div className="board">
       <h1 className="board__title">Board</h1>
@@ -95,20 +114,30 @@ export default function Board() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="columns">
-          <SortableContext items={columnIds}>
-            {columns.map((column) => (
-              <Column
-                key={column.id}
-                id={column.id}
-                title={column.title}
-                tasks={tasks.filter((task) => task.columnId === column.id)}
-                addTask={addTask}
-                updateTask={updateTask}
-                deleteTask={deleteTask}
-              ></Column>
-            ))}
-          </SortableContext>
+        <div className="board__main">
+          <div className="board__columns">
+            <SortableContext items={columnIds}>
+              {columns.map((column) => (
+                <Column
+                  key={column.id}
+                  id={column.id}
+                  title={column.title}
+                  tasks={tasks.filter((task) => task.columnId === column.id)}
+                  addTask={addTask}
+                  updateTask={updateTask}
+                  deleteTask={deleteTask}
+                ></Column>
+              ))}
+            </SortableContext>
+          </div>
+
+          {activeColumn || activeTask ? (
+            <BinColumn></BinColumn>
+          ) : (
+            <button className="board__button" onClick={addColumn}>
+              Create column
+            </button>
+          )}
         </div>
 
         {createPortal(
@@ -183,16 +212,26 @@ export default function Board() {
 
     if (!over) return;
 
-    if (activeColumn?.id === over.id) return;
+    if (over.id === "bin") {
+      if (active.data.current?.column) {
+        deleteColumn(active.id as string);
+        return;
+      } else {
+        deleteTask(active.id as number);
+        return;
+      }
+    }
 
-    setColumns((columns) => {
-      const activeIndex = columns.findIndex(
-        (column) => column.id === active.id
-      );
+    if (active.data.current?.column) {
+      setColumns((columns) => {
+        const activeIndex = columns.findIndex(
+          (column) => column.id === active.id
+        );
 
-      const overIndex = columns.findIndex((column) => column.id === over.id);
+        const overIndex = columns.findIndex((column) => column.id === over.id);
 
-      return arrayMove(columns, activeIndex, overIndex);
-    });
+        return arrayMove(columns, activeIndex, overIndex);
+      });
+    }
   }
 }
