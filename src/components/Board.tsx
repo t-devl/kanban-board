@@ -48,6 +48,8 @@ export default function Board() {
       title: "Done",
     },
   ]);
+  const [taskCount, setTaskCount] = useState(tasks.length + 1);
+  const [columnCount, setColumnCount] = useState(columns.length + 1);
 
   const [activeTask, setActiveTask] = useState<CardProps | null>(null);
   const [activeColumn, setActiveColumn] = useState<ColumnProps | null>(null);
@@ -68,11 +70,13 @@ export default function Board() {
     setTasks([
       ...tasks,
       {
-        id: tasks.length + 1,
+        id: taskCount,
         title: "Insert title here",
         columnId: columnId,
       },
     ]);
+
+    setTaskCount(taskCount + 1);
   }
 
   function updateTask(id: number, title: string) {
@@ -93,10 +97,12 @@ export default function Board() {
     setColumns([
       ...columns,
       {
-        id: `column${columns.length + 1}`,
+        id: `column${columnCount}`,
         title: "Insert title here",
       },
     ]);
+
+    setColumnCount(columnCount + 1);
   }
 
   function updateColumn(id: string, title: string) {
