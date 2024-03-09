@@ -56,14 +56,14 @@ export default function Column(props: ColumnProps) {
         <div className="column__header">
           {isEditing ? (
             <>
-              <textarea
+              <input
                 className="column__title column__title--edit"
                 value={props.title}
                 autoFocus
                 onBlur={toggleEditing}
                 onKeyDown={(e) => handleKeyDown(e.key)}
                 onChange={(e) => props.updateColumn(props.id, e.target.value)}
-              ></textarea>
+              ></input>
               <button
                 className="column__button column__button--delete"
                 title="Delete column"
@@ -94,6 +94,8 @@ export default function Column(props: ColumnProps) {
               key={task.id}
               id={task.id}
               title={task.title}
+              description={task.description}
+              columnName={props.title}
               updateTask={props.updateTask}
               deleteTask={props.deleteTask}
             ></Card>

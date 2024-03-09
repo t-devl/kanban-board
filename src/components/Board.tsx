@@ -21,14 +21,19 @@ export default function Board() {
   const [title, setTitle] = useState("Board");
   const [isEditing, setIsEditing] = useState(false);
   const [tasks, setTasks] = useState([
-    { id: 1, title: "Ticket title 1", columnId: "toDo" },
-    { id: 2, title: "Ticket title 2", columnId: "toDo" },
-    { id: 3, title: "Ticket title 3", columnId: "inProgress" },
-    { id: 4, title: "Ticket title 4", columnId: "inProgress" },
-    { id: 5, title: "Ticket title 5", columnId: "inQA" },
-    { id: 6, title: "Ticket title 6", columnId: "inQA" },
-    { id: 7, title: "Ticket title 7", columnId: "done" },
-    { id: 8, title: "Ticket title 8", columnId: "done" },
+    { id: 1, title: "Ticket title 1", description: "", columnId: "toDo" },
+    { id: 2, title: "Ticket title 2", description: "", columnId: "toDo" },
+    {
+      id: 3,
+      title: "Ticket title 3",
+      description: "",
+      columnId: "inProgress",
+    },
+    { id: 4, title: "Ticket title 4", description: "", columnId: "inProgress" },
+    { id: 5, title: "Ticket title 5", description: "", columnId: "inQA" },
+    { id: 6, title: "Ticket title 6", description: "", columnId: "inQA" },
+    { id: 7, title: "Ticket title 7", description: "", columnId: "done" },
+    { id: 8, title: "Ticket title 8", description: "", columnId: "done" },
   ]);
   const [columns, setColumns] = useState([
     {
@@ -72,6 +77,7 @@ export default function Board() {
       {
         id: taskCount,
         title: "Insert title here",
+        description: "",
         columnId: columnId,
       },
     ]);
@@ -79,9 +85,9 @@ export default function Board() {
     setTaskCount(taskCount + 1);
   }
 
-  function updateTask(id: number, title: string) {
+  function updateTask(id: number, text: { [key: string]: string }) {
     const updatedTasks = tasks.map((task) => {
-      return task.id === id ? { ...task, title } : task;
+      return task.id === id ? { ...task, ...text } : task;
     });
 
     setTasks(updatedTasks);
@@ -134,15 +140,14 @@ export default function Board() {
   return (
     <div className="board">
       {isEditing ? (
-        <textarea
+        <input
           className="board__title board__title--edit"
           value={title}
-          rows={1}
           autoFocus
           onBlur={toggleEditing}
           onKeyDown={(e) => handleKeyDown(e.key)}
           onChange={(e) => setTitle(e.target.value)}
-        ></textarea>
+        ></input>
       ) : (
         <h1 className="board__title" onClick={toggleEditing}>
           {title}
@@ -201,6 +206,8 @@ export default function Board() {
               <Card
                 id={activeTask.id}
                 title={activeTask.title}
+                description={activeTask.description}
+                columnName={activeTask.columnName}
                 updateTask={updateTask}
                 deleteTask={deleteTask}
               ></Card>
