@@ -16,6 +16,7 @@ import { createPortal } from "react-dom";
 import Card from "./Card";
 import { useMemo } from "react";
 import BinColumn from "./BinColumn";
+import CardCreateModal from "./CardCreateModal";
 
 export default function Board() {
   const [title, setTitle] = useState("Board");
@@ -59,6 +60,8 @@ export default function Board() {
   const [activeTask, setActiveTask] = useState<CardProps | null>(null);
   const [activeColumn, setActiveColumn] = useState<ColumnProps | null>(null);
 
+  const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -71,14 +74,20 @@ export default function Board() {
     return columns.map((column) => column.id);
   }, [columns]);
 
-  function addTask(columnId: string) {
+  function toggleModal(columnId: string | null) {
+    setSelectedColumnId(columnId);
+  }
+
+  function addTask(task: {
+    columnId: string;
+    title: string;
+    description: string;
+  }) {
     setTasks([
       ...tasks,
       {
         id: taskCount,
-        title: "Insert title here",
-        description: "",
-        columnId: columnId,
+        ...task,
       },
     ]);
 
@@ -174,6 +183,7 @@ export default function Board() {
                   addTask={addTask}
                   updateTask={updateTask}
                   deleteTask={deleteTask}
+                  toggleModal={toggleModal}
                 ></Column>
               ))}
             </SortableContext>
@@ -198,6 +208,7 @@ export default function Board() {
                 updateColumn={updateColumn}
                 deleteColumn={deleteColumn}
                 addTask={addTask}
+                toggleModal={toggleModal}
                 updateTask={updateTask}
                 deleteTask={deleteTask}
               ></Column>
@@ -216,6 +227,14 @@ export default function Board() {
           document.body
         )}
       </DndContext>
+      {selectedColumnId && (
+        <CardCreateModal
+          columnId={selectedColumnId}
+          columns={columns}
+          createTask={addTask}
+          closeModal={() => toggleModal(null)}
+        ></CardCreateModal>
+      )}
     </div>
   );
 

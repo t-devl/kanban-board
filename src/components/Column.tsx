@@ -103,7 +103,7 @@ export default function Column(props: ColumnProps) {
         </SortableContext>
       </div>
       <button
-        onClick={() => props.addTask(props.id)}
+        onClick={() => props.toggleModal(props.id)}
         className="column__button"
       >
         + Create task
