@@ -49,7 +49,6 @@ export default function CardCreateModal(props: Props) {
 
           <textarea
             className="card-modal__description card-modal__description--edit"
-            autoFocus
             placeholder="Enter a description..."
             name="description"
           ></textarea>

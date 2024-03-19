@@ -52,42 +52,42 @@ export default function Column(props: ColumnProps) {
       ref={setNodeRef}
       style={style}
     >
+      <div className="column__header">
+        {isEditing ? (
+          <>
+            <input
+              className="column__title column__title--edit"
+              value={props.title}
+              autoFocus
+              onBlur={toggleEditing}
+              onKeyDown={(e) => handleKeyDown(e.key)}
+              onChange={(e) => props.updateColumn(props.id, e.target.value)}
+            ></input>
+            <button
+              className="column__button column__button--delete"
+              title="Delete column"
+              onMouseDown={() => {
+                props.deleteColumn(props.id);
+              }}
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 className="column__title" onClick={toggleEditing}>
+              {props.title}
+            </h2>
+            <FontAwesomeIcon
+              className="column__icon"
+              icon={faGripVertical}
+              {...attributes}
+              {...listeners}
+            />
+          </>
+        )}
+      </div>
       <div className="column__main">
-        <div className="column__header">
-          {isEditing ? (
-            <>
-              <input
-                className="column__title column__title--edit"
-                value={props.title}
-                autoFocus
-                onBlur={toggleEditing}
-                onKeyDown={(e) => handleKeyDown(e.key)}
-                onChange={(e) => props.updateColumn(props.id, e.target.value)}
-              ></input>
-              <button
-                className="column__button column__button--delete"
-                title="Delete column"
-                onMouseDown={() => {
-                  props.deleteColumn(props.id);
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
-            </>
-          ) : (
-            <>
-              <h2 className="column__title" onClick={toggleEditing}>
-                {props.title}
-              </h2>
-              <FontAwesomeIcon
-                className="column__icon"
-                icon={faGripVertical}
-                {...attributes}
-                {...listeners}
-              />
-            </>
-          )}
-        </div>
         <SortableContext items={taskIds}>
           {props.tasks.map((task) => (
             <Card

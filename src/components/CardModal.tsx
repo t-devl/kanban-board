@@ -17,7 +17,6 @@ export default function CardModal(props: Props) {
   const { task } = props;
 
   const [description, setDescription] = useState(props.task.description);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isEditingColumn, setIsEditingColumn] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,10 +31,10 @@ export default function CardModal(props: Props) {
     }
   }
 
-  function handleKeyDown(key: string) {
-    if (key === "Enter") {
-      setIsEditingTitle(false);
-    }
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    e.target.style.height = "inherit";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+    updateTitle(e.target.value);
   }
 
   function handleSave() {
@@ -53,26 +52,19 @@ export default function CardModal(props: Props) {
     setIsEditingColumn(false);
   }
 
+  const titleRows = (task.title.match(/\n/g) || "").length + 1;
+
   return (
     <div className="card-modal-container ">
       <div className="card-modal">
         <div className="card-modal__header">
-          {isEditingTitle ? (
-            <input
-              className="card-modal__title card-modal__title--edit"
-              value={task.title}
-              onBlur={() => !errorMessage && setIsEditingTitle(false)}
-              onKeyDown={(e) => !errorMessage && handleKeyDown(e.key)}
-              onChange={(e) => updateTitle(e.target.value)}
-            ></input>
-          ) : (
-            <h2
-              className="card-modal__title"
-              onClick={() => setIsEditingTitle(true)}
-            >
-              {task.title}
-            </h2>
-          )}
+          <textarea
+            className="card-modal__title"
+            value={task.title}
+            rows={titleRows}
+            onChange={(e) => handleChange(e)}
+          ></textarea>
+
           <button
             className="card-modal__button"
             onClick={() => !errorMessage && props.selectTask(null)}
@@ -110,14 +102,16 @@ export default function CardModal(props: Props) {
             ))}
           </select>
         )}
-        {isEditingDescription ? (
-          <>
-            <textarea
-              className="card-modal__description card-modal__description--edit"
-              value={description}
-              onKeyDown={(e) => handleKeyDown(e.key)}
-              onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
+
+        <>
+          <textarea
+            className="card-modal__description"
+            value={description}
+            placeholder="Add a more detailed description..."
+            onFocus={() => setIsEditingDescription(true)}
+            onChange={(e) => setDescription(e.target.value)}
+          ></textarea>
+          {isEditingDescription && (
             <div className="card-modal__buttons">
               <button
                 className="card-modal__button card-modal__button--save"
@@ -132,21 +126,8 @@ export default function CardModal(props: Props) {
                 Cancel
               </button>
             </div>
-          </>
-        ) : (
-          <p
-            className="card-modal__description"
-            onClick={() => setIsEditingDescription(true)}
-          >
-            {task.description === "" ? (
-              <span className="card-modal__description--empty">
-                Add a more detailed description...
-              </span>
-            ) : (
-              task.description
-            )}
-          </p>
-        )}
+          )}
+        </>
       </div>
     </div>
   );

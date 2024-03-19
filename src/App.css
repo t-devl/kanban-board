@@ -37,6 +37,24 @@ textarea {
   word-break: break-all;
   margin-bottom: 1rem;
   font-size: 2rem;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  resize: none;
+  cursor: text;
+}
+
+.board__title:hover {
+  background-color: rgb(237, 237, 237);
+}
+
+.board__title--edit {
+  border: none;
+  font-weight: bold;
+}
+
+.board__title--edit:hover {
+  background: none;
 }
 
 .board__button {
@@ -75,7 +93,7 @@ textarea {
 }
 
 .column__main {
-  height: calc(100% - 2rem);
+  height: calc(85% - 1rem);
   overflow: auto;
 }
 
@@ -91,6 +109,29 @@ textarea {
   font-size: 1rem;
   text-transform: uppercase;
   word-break: break-all;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  margin-top: -0.5rem;
+  resize: none;
+  cursor: text;
+}
+
+.column__title:hover {
+  background-color: lightgrey;
+}
+
+.column__title--edit {
+  border: none;
+  font-weight: bold;
+}
+
+.column__title--edit:hover {
+  background-color: white;
+}
+
+.column-title--edit:focus {
+  background: none;
 }
 
 .column__icon {
@@ -116,8 +157,7 @@ textarea {
 
 .column__button--delete {
   position: relative;
-  bottom: 0;
-  align-self: center;
+  bottom: 0.25rem;
   padding: 0;
   margin-left: 0.5rem;
   color: red;
@@ -187,12 +227,7 @@ textarea {
   font-size: 1rem;
   font-weight: normal;
   word-wrap: break-word;
-}
-
-.card__title--edit,
-.column__title--edit,
-.board__title--edit,
-.card-modal__description--edit {
+  white-space: pre-line;
   resize: none;
 }
 
@@ -255,14 +290,23 @@ textarea {
 
 .card-modal__title {
   width: 100%;
-  margin-right: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.card-modal__title--edit {
   padding: 0.5rem;
+  margin: 0 0.5rem 1rem -0.5rem;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
   font-size: 1.4rem;
   font-weight: bold;
+  overflow: hidden;
+  resize: none;
+}
+
+.card-modal__title:hover {
+  background-color: lightgrey;
+}
+
+.card-modal__title:focus {
+  background-color: white;
 }
 
 .card-modal__error {
@@ -272,12 +316,22 @@ textarea {
 
 .card-modal__description {
   width: 100%;
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  font-size: 1rem;
   white-space: pre-line;
+  resize: none;
 }
 
-.card-modal__description--edit {
-  padding: 0.5rem;
-  font-size: 1rem;
+.card-modal__description:hover {
+  background-color: lightgrey;
+}
+
+.card-modal__description:focus {
+  background-color: white;
 }
 
 .card-modal__description--empty {
