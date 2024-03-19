@@ -94,10 +94,7 @@ export default function Column(props: ColumnProps) {
               key={task.id}
               id={task.id}
               title={task.title}
-              description={task.description}
-              columnName={props.title}
-              updateTask={props.updateTask}
-              deleteTask={props.deleteTask}
+              selectTask={props.selectTask}
             ></Card>
           ))}
         </SortableContext>

@@ -292,6 +292,8 @@ textarea {
 }
 
 .card-modal__info {
+  display: inline-block;
+  margin-right: 0.5rem;
   margin-bottom: 1rem;
 }
 

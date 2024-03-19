@@ -11,17 +11,18 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { CardProps, ColumnProps } from "./common/types";
+import { CardProps, ColumnProps, Task } from "./common/types";
 import { createPortal } from "react-dom";
 import Card from "./Card";
 import { useMemo } from "react";
 import BinColumn from "./BinColumn";
 import CardCreateModal from "./CardCreateModal";
+import CardModal from "./CardModal";
 
 export default function Board() {
   const [title, setTitle] = useState("Board");
   const [isEditing, setIsEditing] = useState(false);
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     { id: 1, title: "Ticket title 1", description: "", columnId: "toDo" },
     { id: 2, title: "Ticket title 2", description: "", columnId: "toDo" },
     {
@@ -36,7 +37,7 @@ export default function Board() {
     { id: 7, title: "Ticket title 7", description: "", columnId: "done" },
     { id: 8, title: "Ticket title 8", description: "", columnId: "done" },
   ]);
-  const [columns, setColumns] = useState([
+  const [columns, setColumns] = useState<{ id: string; title: string }[]>([
     {
       id: "toDo",
       title: "To do",
@@ -54,13 +55,15 @@ export default function Board() {
       title: "Done",
     },
   ]);
-  const [taskCount, setTaskCount] = useState(tasks.length + 1);
-  const [columnCount, setColumnCount] = useState(columns.length + 1);
+  const taskCount = tasks.length + 1;
+  const columnCount = columns.length + 1;
 
-  const [activeTask, setActiveTask] = useState<CardProps | null>(null);
-  const [activeColumn, setActiveColumn] = useState<ColumnProps | null>(null);
+  const [draggedTask, setDraggedTask] = useState<CardProps | null>(null);
+  const [draggedColumn, setDraggedColumn] = useState<ColumnProps | null>(null);
 
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
+  const selectedTask = tasks.find((task) => task.id === selectedTaskId);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -74,8 +77,12 @@ export default function Board() {
     return columns.map((column) => column.id);
   }, [columns]);
 
-  function toggleModal(columnId: string | null) {
+  function toggleCreateModal(columnId: string | null) {
     setSelectedColumnId(columnId);
+  }
+
+  function selectTask(taskId: number | null) {
+    setSelectedTaskId(taskId);
   }
 
   function addTask(task: {
@@ -90,8 +97,6 @@ export default function Board() {
         ...task,
       },
     ]);
-
-    setTaskCount(taskCount + 1);
   }
 
   function updateTask(id: number, text: { [key: string]: string }) {
@@ -116,8 +121,6 @@ export default function Board() {
         title: "Insert title here",
       },
     ]);
-
-    setColumnCount(columnCount + 1);
   }
 
   function updateColumn(id: string, title: string) {
@@ -180,16 +183,17 @@ export default function Board() {
                   tasks={tasks.filter((task) => task.columnId === column.id)}
                   updateColumn={updateColumn}
                   deleteColumn={deleteColumn}
+                  selectTask={selectTask}
                   addTask={addTask}
                   updateTask={updateTask}
                   deleteTask={deleteTask}
-                  toggleModal={toggleModal}
+                  toggleModal={toggleCreateModal}
                 ></Column>
               ))}
             </SortableContext>
           </div>
 
-          {activeColumn || activeTask ? (
+          {draggedColumn || draggedTask ? (
             <BinColumn></BinColumn>
           ) : (
             <button className="board__button" onClick={addColumn}>
@@ -200,27 +204,25 @@ export default function Board() {
 
         {createPortal(
           <DragOverlay>
-            {activeColumn && (
+            {draggedColumn && (
               <Column
-                id={activeColumn.id}
-                title={activeColumn.title}
-                tasks={activeColumn.tasks}
+                id={draggedColumn.id}
+                title={draggedColumn.title}
+                tasks={draggedColumn.tasks}
                 updateColumn={updateColumn}
                 deleteColumn={deleteColumn}
                 addTask={addTask}
-                toggleModal={toggleModal}
+                toggleModal={toggleCreateModal}
+                selectTask={selectTask}
                 updateTask={updateTask}
                 deleteTask={deleteTask}
               ></Column>
             )}
-            {activeTask && (
+            {draggedTask && (
               <Card
-                id={activeTask.id}
-                title={activeTask.title}
-                description={activeTask.description}
-                columnName={activeTask.columnName}
-                updateTask={updateTask}
-                deleteTask={deleteTask}
+                id={draggedTask.id}
+                title={draggedTask.title}
+                selectTask={selectTask}
               ></Card>
             )}
           </DragOverlay>,
@@ -232,8 +234,22 @@ export default function Board() {
           columnId={selectedColumnId}
           columns={columns}
           createTask={addTask}
-          closeModal={() => toggleModal(null)}
+          closeModal={() => toggleCreateModal(null)}
         ></CardCreateModal>
+      )}
+      {selectedTask && (
+        <CardModal
+          task={selectedTask}
+          columnName={
+            columns.find((column) => column.id === selectedTask.columnId)
+              ?.title || ""
+          }
+          columns={columns}
+          selectTask={selectTask}
+          toggleModal={toggleEditing}
+          updateTask={updateTask}
+          deleteTask={deleteTask}
+        ></CardModal>
       )}
     </div>
   );
@@ -242,9 +258,9 @@ export default function Board() {
     const { active } = event;
 
     if (active.data.current?.column)
-      setActiveColumn(active.data.current?.column);
-    else setActiveTask(active.data.current?.task);
-    setActiveTask(active.data.current?.task);
+      setDraggedColumn(active.data.current?.column);
+    else setDraggedTask(active.data.current?.task);
+    setDraggedTask(active.data.current?.task);
   }
 
   function handleDragOver(event: DragOverEvent) {
@@ -278,8 +294,8 @@ export default function Board() {
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    setActiveTask(null);
-    setActiveColumn(null);
+    setDraggedTask(null);
+    setDraggedColumn(null);
 
     if (!over) return;
 
