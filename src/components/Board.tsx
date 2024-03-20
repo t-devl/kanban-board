@@ -25,12 +25,7 @@ export default function Board() {
   const [tasks, setTasks] = useState<Task[]>([
     { id: 1, title: "Ticket title 1", description: "", columnId: "toDo" },
     { id: 2, title: "Ticket title 2", description: "", columnId: "toDo" },
-    {
-      id: 3,
-      title: "Ticket title 3",
-      description: "",
-      columnId: "inProgress",
-    },
+    { id: 3, title: "Ticket title 3", description: "", columnId: "inProgress" },
     { id: 4, title: "Ticket title 4", description: "", columnId: "inProgress" },
     { id: 5, title: "Ticket title 5", description: "", columnId: "inQA" },
     { id: 6, title: "Ticket title 6", description: "", columnId: "inQA" },
@@ -184,9 +179,6 @@ export default function Board() {
                   updateColumn={updateColumn}
                   deleteColumn={deleteColumn}
                   selectTask={selectTask}
-                  addTask={addTask}
-                  updateTask={updateTask}
-                  deleteTask={deleteTask}
                   toggleModal={toggleCreateModal}
                 ></Column>
               ))}
@@ -211,11 +203,8 @@ export default function Board() {
                 tasks={draggedColumn.tasks}
                 updateColumn={updateColumn}
                 deleteColumn={deleteColumn}
-                addTask={addTask}
-                toggleModal={toggleCreateModal}
                 selectTask={selectTask}
-                updateTask={updateTask}
-                deleteTask={deleteTask}
+                toggleModal={toggleCreateModal}
               ></Column>
             )}
             {draggedTask && (
