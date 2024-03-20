@@ -73,35 +73,37 @@ export default function CardModal(props: Props) {
           </button>
         </div>
         {errorMessage && <p className="card-modal__error">{errorMessage}</p>}
-        <p className="card-modal__info">
-          In column{" "}
-          {!isEditingColumn && (
-            <span
-              className="card-modal__column"
-              onClick={() => setIsEditingColumn(true)}
+        <div className="card-modal__info">
+          <p className="card-modal__column-text">
+            In column{" "}
+            {!isEditingColumn && (
+              <span
+                className="card-modal__column"
+                onClick={() => setIsEditingColumn(true)}
+              >
+                {props.columnName}
+              </span>
+            )}
+          </p>
+          {isEditingColumn && (
+            <select
+              className="card-modal__dropdown"
+              name="column"
+              onChange={(e) => handleColumnChange(e.target.value)}
+              onBlur={() => setIsEditingColumn(false)}
             >
-              {props.columnName}
-            </span>
+              {props.columns.map((column) => (
+                <option
+                  className="card-modal__option"
+                  selected={column.id === task.columnId}
+                  key={column.id}
+                  value={column.id}
+                  label={column.title}
+                ></option>
+              ))}
+            </select>
           )}
-        </p>
-        {isEditingColumn && (
-          <select
-            className="card-modal__dropdown"
-            name="column"
-            onChange={(e) => handleColumnChange(e.target.value)}
-            onBlur={() => setIsEditingColumn(false)}
-          >
-            {props.columns.map((column) => (
-              <option
-                className="card-modal__option"
-                selected={column.id === task.columnId}
-                key={column.id}
-                value={column.id}
-                label={column.title}
-              ></option>
-            ))}
-          </select>
-        )}
+        </div>
 
         <>
           <textarea

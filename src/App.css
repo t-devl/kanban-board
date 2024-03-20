@@ -100,19 +100,19 @@ textarea {
 .column__header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
+
   color: rgb(109, 109, 109);
 }
 
 .column__title {
-  width: 100%;
-  font-size: 1rem;
-  text-transform: uppercase;
-  word-break: break-all;
+  width: 90%;
   border-radius: 5px;
   padding: 0.5rem;
   margin-left: -0.5rem;
   margin-top: -0.5rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
   resize: none;
   cursor: text;
 }
@@ -174,6 +174,11 @@ textarea {
   cursor: grabbing;
 }
 
+.column__error {
+  margin-top: 0.5rem;
+  color: red;
+}
+
 .column-bin {
   display: flex;
   flex-direction: column;
@@ -212,7 +217,7 @@ textarea {
 
 .card {
   padding: 0.5rem;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
   border-radius: 5px;
   background-color: white;
   box-shadow: 0px 1px 2px 0px rgb(171, 171, 171);
@@ -267,19 +272,6 @@ textarea {
   margin-bottom: 1rem;
   color: grey;
   font-size: 1rem;
-}
-
-.card-modal__dropdown {
-  max-width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  font-weight: bolder;
-  text-transform: uppercase;
-}
-
-.card-modal__option {
-  position: absolute;
 }
 
 .card-modal__header {
@@ -346,18 +338,40 @@ textarea {
 }
 
 .card-modal__info {
-  display: inline-block;
-  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
   margin-bottom: 1rem;
 }
 
+.card-modal__column-text {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+}
+
 .card-modal__column {
+  width: 100%;
+  flex: 1;
   padding: 0.25rem;
+  margin-left: 0.5rem;
   border-radius: 5px;
   background-color: lightgrey;
   color: rgb(109, 109, 109);
   text-transform: uppercase;
   font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-modal__dropdown {
+  width: 100%;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+  font-weight: bolder;
+  text-transform: uppercase;
+  flex: 1;
 }
 
 .card-modal__buttons {

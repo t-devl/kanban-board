@@ -31,19 +31,32 @@ export default function Column(props: ColumnProps) {
   };
 
   const [isEditing, setIsEditing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const taskIds = useMemo(() => {
     return props.tasks.map((task) => task.id);
   }, [props.tasks]);
 
   function toggleEditing() {
-    setIsEditing(!isEditing);
+    if (!errorMessage) {
+      setIsEditing(!isEditing);
+    }
   }
 
   function handleKeyDown(key: string) {
     if (key === "Enter") {
       toggleEditing();
     }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.value) {
+      setErrorMessage("Title cannot be empty");
+    } else if (errorMessage) {
+      setErrorMessage("");
+    }
+
+    props.updateColumn(props.id, e.target.value);
   }
 
   return (
@@ -61,7 +74,7 @@ export default function Column(props: ColumnProps) {
               autoFocus
               onBlur={toggleEditing}
               onKeyDown={(e) => handleKeyDown(e.key)}
-              onChange={(e) => props.updateColumn(props.id, e.target.value)}
+              onChange={(e) => handleChange(e)}
             ></input>
             <button
               className="column__button column__button--delete"
@@ -87,6 +100,7 @@ export default function Column(props: ColumnProps) {
           </>
         )}
       </div>
+      {errorMessage && <p className="column__error">{errorMessage}</p>}
       <div className="column__main">
         <SortableContext items={taskIds}>
           {props.tasks.map((task) => (
