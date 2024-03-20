@@ -28,7 +28,10 @@ export default function CardCreateModal(props: Props) {
       <div className="card-modal">
         <h2 className="card-modal__heading">Create a Task</h2>
         <form onSubmit={(e) => handleSubmit(e)}>
-          <select className="card-modal__dropdown" name="column">
+          <select
+            className="card-modal__dropdown card-modal__dropdown--create"
+            name="column"
+          >
             {props.columns.map((column) => (
               <option
                 className="card-modal__option"
