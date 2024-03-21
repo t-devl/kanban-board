@@ -108,6 +108,7 @@ export default function Column(props: ColumnProps) {
               key={task.id}
               id={task.id}
               title={task.title}
+              labels={task.labels}
               selectTask={props.selectTask}
             ></Card>
           ))}

@@ -11,7 +11,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { CardProps, ColumnProps, Task } from "./common/types";
+import { CardProps, ColumnProps, Label, Task } from "./common/types";
 import { createPortal } from "react-dom";
 import Card from "./Card";
 import { useMemo } from "react";
@@ -23,14 +23,65 @@ export default function Board() {
   const [title, setTitle] = useState("Board");
   const [isEditing, setIsEditing] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: "Ticket title 1", description: "", columnId: "toDo" },
-    { id: 2, title: "Ticket title 2", description: "", columnId: "toDo" },
-    { id: 3, title: "Ticket title 3", description: "", columnId: "inProgress" },
-    { id: 4, title: "Ticket title 4", description: "", columnId: "inProgress" },
-    { id: 5, title: "Ticket title 5", description: "", columnId: "inQA" },
-    { id: 6, title: "Ticket title 6", description: "", columnId: "inQA" },
-    { id: 7, title: "Ticket title 7", description: "", columnId: "done" },
-    { id: 8, title: "Ticket title 8", description: "", columnId: "done" },
+    {
+      id: 1,
+      title: "Ticket title 1",
+      description: "",
+      columnId: "toDo",
+      labels: [
+        { id: "frontEnd", title: "Front end", colour: "#7feaaf" },
+        { id: "backEnd", title: "Back end", colour: "#7fc3ea" },
+      ],
+    },
+    {
+      id: 2,
+      title: "Ticket title 2",
+      description: "",
+      columnId: "toDo",
+      labels: [],
+    },
+    {
+      id: 3,
+      title: "Ticket title 3",
+      description: "",
+      columnId: "inProgress",
+      labels: [{ id: "frontEnd", title: "Front end", colour: "#7feaaf" }],
+    },
+    {
+      id: 4,
+      title: "Ticket title 4",
+      description: "",
+      columnId: "inProgress",
+      labels: [],
+    },
+    {
+      id: 5,
+      title: "Ticket title 5",
+      description: "",
+      columnId: "inQA",
+      labels: [],
+    },
+    {
+      id: 6,
+      title: "Ticket title 6",
+      description: "",
+      columnId: "inQA",
+      labels: [{ id: "backEnd", title: "Back end", colour: "#7fc3ea" }],
+    },
+    {
+      id: 7,
+      title: "Ticket title 7",
+      description: "",
+      columnId: "done",
+      labels: [],
+    },
+    {
+      id: 8,
+      title: "Ticket title 8",
+      description: "",
+      columnId: "done",
+      labels: [],
+    },
   ]);
   const [columns, setColumns] = useState<{ id: string; title: string }[]>([
     {
@@ -59,6 +110,14 @@ export default function Board() {
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
   const selectedTask = tasks.find((task) => task.id === selectedTaskId);
+
+  const labels = [
+    { id: "frontEnd", title: "Front end", colour: "#7feaaf" },
+    { id: "backEnd", title: "Back end", colour: "#7fc3ea" },
+    { id: "feature", title: "Feature", colour: "#a57fea" },
+    { id: "bug", title: "Bug", colour: "#eab17f" },
+    { id: "highPriority", title: "High priority", colour: "#ea7f7f" },
+  ];
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -90,11 +149,12 @@ export default function Board() {
       {
         id: taskCount,
         ...task,
+        labels: [],
       },
     ]);
   }
 
-  function updateTask(id: number, text: { [key: string]: string }) {
+  function updateTask(id: number, text: { [key: string]: string | Label[] }) {
     const updatedTasks = tasks.map((task) => {
       return task.id === id ? { ...task, ...text } : task;
     });
@@ -211,6 +271,7 @@ export default function Board() {
               <Card
                 id={draggedTask.id}
                 title={draggedTask.title}
+                labels={draggedTask.labels}
                 selectTask={selectTask}
               ></Card>
             )}
@@ -234,6 +295,7 @@ export default function Board() {
               ?.title || ""
           }
           columns={columns}
+          labels={labels}
           selectTask={selectTask}
           toggleModal={toggleEditing}
           updateTask={updateTask}

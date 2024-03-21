@@ -225,6 +225,19 @@ textarea {
   touch-action: none;
 }
 
+.card__labels {
+  display: flex;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+
+.card__label {
+  width: 50px;
+  height: 5px;
+  margin-right: 0.5rem;
+  border-radius: 5px;
+}
+
 .card__title {
   width: 100%;
   padding: 0.5rem;
@@ -304,6 +317,36 @@ textarea {
 .card-modal__error {
   margin-bottom: 1rem;
   color: rgb(221, 5, 5);
+}
+
+.card-modal__labels {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.card-modal__label {
+  background-color: #7fc3ea;
+  padding: 0.25rem;
+  border-radius: 5px;
+}
+
+.labels__button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgb(109, 109, 109);
+  border-radius: 5px;
+  background-color: rgb(239, 239, 239);
+  background: none;
+  color: rgb(109, 109, 109);
+  cursor: pointer;
+}
+
+.labels__button:hover {
+  border: 1px solid black;
+  background-color: rgb(239, 239, 239);
+  color: black;
 }
 
 .card-modal__description {
@@ -409,6 +452,40 @@ textarea {
 
 .card-modal__button--cancel:hover {
   background-color: lightgrey;
+}
+
+.label-modal {
+  position: absolute;
+  padding: 1rem;
+  box-shadow: 0px 0px 2px 0px rgb(171, 171, 171);
+  border-radius: 5px;
+  width: 250px;
+  background-color: white;
+  left: 0rem;
+  top: 100%;
+}
+
+.label-modal__item {
+  margin-bottom: 0.75rem;
+}
+
+.label-modal__item:last-of-type {
+  margin-bottom: 0;
+}
+
+.label-modal__label {
+  padding: 0.25rem;
+  border-radius: 5px;
+}
+
+.label-modal__input {
+  margin-right: 0.5rem;
+}
+
+.label-modal__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 @media (min-width: 600px) {

@@ -1,15 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { Task } from "./common/types";
+import { Label, Task } from "./common/types";
+import LabelsModal from "./LabelsModal";
 
 type Props = {
   task: Task;
   columnName: string;
   columns: { id: string; title: string }[];
+  labels: Label[];
   toggleModal: () => void;
   selectTask: (taskId: number | null) => void;
-  updateTask: (id: number, text: { [key: string]: string }) => void;
+  updateTask: (id: number, text: { [key: string]: string | Label[] }) => void;
   deleteTask: (id: number) => void;
 };
 
@@ -20,6 +22,18 @@ export default function CardModal(props: Props) {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isEditingColumn, setIsEditingColumn] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLabelsModalActive, setIsLabelsModalActive] = useState(false);
+
+  function toggleLabelsModal() {
+    setIsLabelsModalActive(!isLabelsModalActive);
+  }
+
+  const tagOptions = props.labels.map((tag) => {
+    return {
+      ...tag,
+      active: task.labels.some((activeLabel) => activeLabel.id === tag.id),
+    };
+  });
 
   function updateTitle(text: string) {
     props.updateTask(task.id, { title: text });
@@ -29,6 +43,10 @@ export default function CardModal(props: Props) {
     } else if (errorMessage) {
       setErrorMessage("");
     }
+  }
+
+  function updateLabels(labels: Label[]) {
+    props.updateTask(task.id, { labels });
   }
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -105,31 +123,52 @@ export default function CardModal(props: Props) {
           )}
         </div>
 
-        <>
-          <textarea
-            className="card-modal__description"
-            value={description}
-            placeholder="Add a more detailed description..."
-            onFocus={() => setIsEditingDescription(true)}
-            onChange={(e) => setDescription(e.target.value)}
-          ></textarea>
-          {isEditingDescription && (
-            <div className="card-modal__buttons">
-              <button
-                className="card-modal__button card-modal__button--save"
-                onClick={handleSave}
-              >
-                Save
-              </button>
-              <button
-                className="card-modal__button card-modal__button--cancel"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
+        <div className="card-modal__labels">
+          {task.labels.map((label) => (
+            <div
+              className="card-modal__label"
+              key={label.id}
+              style={{ backgroundColor: label.colour }}
+            >
+              {label.title}
             </div>
+          ))}
+
+          <button className="labels__button" onClick={toggleLabelsModal}>
+            +
+          </button>
+          {isLabelsModalActive && (
+            <LabelsModal
+              options={tagOptions}
+              updateLabels={updateLabels}
+              toggleModal={toggleLabelsModal}
+            ></LabelsModal>
           )}
-        </>
+        </div>
+
+        <textarea
+          className="card-modal__description"
+          value={description}
+          placeholder="Add a more detailed description..."
+          onFocus={() => setIsEditingDescription(true)}
+          onChange={(e) => setDescription(e.target.value)}
+        ></textarea>
+        {isEditingDescription && (
+          <div className="card-modal__buttons">
+            <button
+              className="card-modal__button card-modal__button--save"
+              onClick={handleSave}
+            >
+              Save
+            </button>
+            <button
+              className="card-modal__button card-modal__button--cancel"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,21 @@
+export type Label = {
+  id: string;
+  title: string;
+  colour: string;
+};
+
 export type Task = {
   id: number;
   title: string;
   description: string;
   columnId: string;
+  labels: Label[];
 };
 
 export type CardProps = {
   id: number;
   title: string;
+  labels: Label[];
   selectTask: (taskId: number | null) => void;
 };
 
