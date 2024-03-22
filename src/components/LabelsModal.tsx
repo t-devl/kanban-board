@@ -29,8 +29,8 @@ export default function LabelsModal(props: Props) {
   return (
     <div className="label-modal">
       <div className="label-modal__header">
-        <h2 className="label-modal__title">Tags</h2>
-        <button className="card-modal__button" onClick={props.toggleModal}>
+        <h2 className="label-modal__title">Labels</h2>
+        <button className="label-modal__button" onClick={props.toggleModal}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>

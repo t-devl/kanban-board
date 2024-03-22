@@ -28,10 +28,10 @@ export default function CardModal(props: Props) {
     setIsLabelsModalActive(!isLabelsModalActive);
   }
 
-  const tagOptions = props.labels.map((tag) => {
+  const labelOptions = props.labels.map((label) => {
     return {
-      ...tag,
-      active: task.labels.some((activeLabel) => activeLabel.id === tag.id),
+      ...label,
+      active: task.labels.some((activeLabel) => activeLabel.id === label.id),
     };
   });
 
@@ -139,7 +139,7 @@ export default function CardModal(props: Props) {
           </button>
           {isLabelsModalActive && (
             <LabelsModal
-              options={tagOptions}
+              options={labelOptions}
               updateLabels={updateLabels}
               toggleModal={toggleLabelsModal}
             ></LabelsModal>

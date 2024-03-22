@@ -26,11 +26,6 @@ export default function Card(props: CardProps) {
     transform: CSS.Transform.toString(transform),
   };
 
-  // const tags = [
-  //   { title: "Front end", colour: "#7feaaf", active: false },
-  //   { title: "Back end", colour: "#7fc3ea", active: false },
-  // ];
-
   return (
     <div className="card-container">
       <div

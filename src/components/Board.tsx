@@ -18,6 +18,7 @@ import { useMemo } from "react";
 import BinColumn from "./BinColumn";
 import CardCreateModal from "./CardCreateModal";
 import CardModal from "./CardModal";
+import FiltersModal from "./FiltersModal";
 
 export default function Board() {
   const [title, setTitle] = useState("Board");
@@ -83,6 +84,7 @@ export default function Board() {
       labels: [],
     },
   ]);
+  const [filters, setFilters] = useState<string[]>([]);
   const [columns, setColumns] = useState<{ id: string; title: string }[]>([
     {
       id: "toDo",
@@ -110,6 +112,8 @@ export default function Board() {
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const [selectedColumnId, setSelectedColumnId] = useState<string | null>(null);
   const selectedTask = tasks.find((task) => task.id === selectedTaskId);
+
+  const [isFiltersModalActive, setIsFiltersModalActive] = useState(false);
 
   const labels = [
     { id: "frontEnd", title: "Front end", colour: "#7feaaf" },
@@ -204,22 +208,50 @@ export default function Board() {
     }
   }
 
+  function filterTasks(labelId: string, isChecked: boolean) {
+    if (isChecked) {
+      setFilters([...filters, labelId]);
+    } else {
+      setFilters(filters.filter((label) => label !== labelId));
+    }
+  }
+
+  const filteredTasks =
+    filters.length > 0
+      ? tasks.filter((task) => task.labels.some((r) => filters.includes(r.id)))
+      : tasks;
+
   return (
     <div className="board">
-      {isEditing ? (
-        <input
-          className="board__title board__title--edit"
-          value={title}
-          autoFocus
-          onBlur={toggleEditing}
-          onKeyDown={(e) => handleKeyDown(e.key)}
-          onChange={(e) => setTitle(e.target.value)}
-        ></input>
-      ) : (
-        <h1 className="board__title" onClick={toggleEditing}>
-          {title}
-        </h1>
-      )}
+      <div className="board__header">
+        {isEditing ? (
+          <input
+            className="board__title board__title--edit"
+            value={title}
+            autoFocus
+            onBlur={toggleEditing}
+            onKeyDown={(e) => handleKeyDown(e.key)}
+            onChange={(e) => setTitle(e.target.value)}
+          ></input>
+        ) : (
+          <h1 className="board__title" onClick={toggleEditing}>
+            {title}
+          </h1>
+        )}
+        <button
+          className="board__button"
+          onClick={() => setIsFiltersModalActive(!isFiltersModalActive)}
+        >
+          Filters
+        </button>
+        {isFiltersModalActive && (
+          <FiltersModal
+            labels={labels}
+            filterTasks={filterTasks}
+            closeModal={() => setIsFiltersModalActive(false)}
+          ></FiltersModal>
+        )}
+      </div>
 
       <DndContext
         sensors={sensors}
@@ -235,7 +267,9 @@ export default function Board() {
                   key={column.id}
                   id={column.id}
                   title={column.title}
-                  tasks={tasks.filter((task) => task.columnId === column.id)}
+                  tasks={filteredTasks.filter(
+                    (task) => task.columnId === column.id
+                  )}
                   updateColumn={updateColumn}
                   deleteColumn={deleteColumn}
                   selectTask={selectTask}
